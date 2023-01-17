@@ -30,10 +30,19 @@ public class AttackMove {
         Random random = new Random();
         damage = random.nextInt(minDamage, maxDamage);
         damage *= attackModifier;
-        //TODO
         return damage;
     }
     public int getApCost(){
         return this.apCost;
+    }
+    public String toString(){
+        String output = "Attack Name: " + this.attackName;
+        output += "\nAttack Cost: " + this.apCost;
+        if (this.maxDamage - 1 != this.minDamage){
+            output += "\nDamage: " + this.minDamage + "-" + (this.maxDamage-1);
+        }else{
+            output += "\nDamage: " + this.minDamage;
+        }
+        return output;
     }
 }

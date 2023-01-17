@@ -1,19 +1,10 @@
-public class Moltres extends Pokemon implements Evolution{
-    public Moltres(AttackMove attackMove){
-        super(Constants.MOLTRES_MAX_HP,Constants.MOLTRES_MAX_AP,attackMove);
-
+public class Moltres extends FirePokemon implements Evolution{
+    public Moltres(){
+        super("Moltres", Constants.MOLTRES_MAX_HP,Constants.MOLTRES_MAX_AP, Constants.ASSISTING_HEATER);
+        this.addAttack(Constants.FIRE_WING);
     }
-
-    protected int getMaxHP(){
-        int max = Constants.INVALID;
-        max = Constants.MOLTRES_MAX_HP;
-        return max;
-    }
-    protected void addAp(int ap) {
-
-    }
-    public Pokemon evolve() {
-        return null;
+    public boolean evolve() {
+        return false;
     }
 }
 

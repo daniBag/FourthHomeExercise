@@ -1,4 +1,4 @@
 public interface Evolution {
-    Pokemon evolve();
+    boolean evolve();
 
 }

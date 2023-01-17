@@ -1,31 +1,22 @@
-public class Charmander extends FirePokemon implements Evolution{
+public class Charmander extends FirePokemon implements Evolution {
 
-    public Charmander(AttackMove attackMove) {
-        super(Constants.CHARMANDER_MAX_HP, Constants.CHARMANDER_MAX_AP, attackMove);
+    public Charmander() {
+        super("Charmander", Constants.CHARMANDER_MAX_HP, Constants.CHARMANDER_MAX_AP, Constants.SCRATCH);
     }
-
-
-    /*public String kickAttack() {
-        return null;
-    }*/
-
-    protected int getMaxHP(){
-        int max = Constants.INVALID;
-        switch (this.getLevel()){
-            case Constants.EVOLUTION_CHARMANDER_LEVEL -> max = Constants.CHARMANDER_MAX_HP;
-            case Constants.EVOLUTION_CHARMELEON_LEVEL -> max = Constants.CHARMELEON_MAX_HP;
-            case Constants.EVOLUTION_CHARIZARD_LEVEL -> max = Constants.CHARIZARD_MAX_HP;
+    public boolean evolve() {
+        boolean evolved = false;
+        if (this.getLevel() == 1){
+            this.evolving("Charmeleon", this.getLifePoints(), Constants.CHARMELEON_MAX_HP,
+                    this.getAttackPoints(), Constants.CHARMELEON_MAX_AP,
+                    this.getLevel() + 1, Constants.FLAME_TAIL);
+            evolved = true;
+        } else if (this.getLevel() == 2) {
+            this.evolving("Charizard", this.getLifePoints(), Constants.CHARIZARD_MAX_HP,
+                    this.getAttackPoints(), Constants.CHARIZARD_MAX_AP,
+                    this.getLevel() + 1, Constants.FIERY_BLAST);
+            evolved = true;
         }
-        return max;
-    }
-
-    @Override
-    protected void addAp(int ap) {
-
-    }
-
-    @Override
-    public Pokemon evolve() {
-        return null;
+        return evolved;
     }
 }
+

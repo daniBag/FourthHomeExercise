@@ -1,10 +1,10 @@
 import java.util.Random;
 
 public abstract class FirePokemon extends Pokemon{
-    public FirePokemon(int lifePoints, int attackPoints, AttackMove attackMove){
-        super(lifePoints, attackPoints, attackMove);
+    protected FirePokemon(String name, int maxHp ,int maxAp, AttackMove attackMove) {
+        super(name, maxHp, maxAp, Constants.FIRE_TYPE, attackMove);
     }
-    public void fireAdditionalEffect(){
+    public void typeEffect(){
         Random random = new Random();
         int randomPercent = random.nextInt(Constants.PERCENTAGE_MIN_RANDOM, Constants.PERCENTAGE_MAX_RANDOM);
         int randomLoseOfLifePoints = random.nextInt(Constants.FIRE_EFFECT_MIN_DAMAGE, Constants.FIRE_EFFECT_MAX_DAMAGE);
@@ -12,7 +12,7 @@ public abstract class FirePokemon extends Pokemon{
            this.takeDamage(randomLoseOfLifePoints);
         }
     }
-    public int specialFireAttack(){
+    public int typeSpecialty(){
         AttackMove[] attackMoves = this.getAttackMoves();
         Random random = new Random();
         int firstAttack = random.nextInt(attackMoves.length);
