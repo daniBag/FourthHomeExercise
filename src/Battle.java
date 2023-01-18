@@ -74,18 +74,18 @@ public class Battle {
                     "\n4. Special Move.");
             menuSelection = scanner.nextInt();
             switch (menuSelection){
-                case 1 -> actionMade = this.attack(player, other);
-                case 2 -> {
+                case Constants.MENU_FIRST_OPTION -> actionMade = this.attack(player, other);
+                case Constants.MENU_SECOND_OPTION -> {
                     this.wait(player);
                     actionMade = true;
                 }
-                case 3 -> {
+                case Constants.MENU_THIRD_OPTION -> {
                     actionMade = player.evolve();
                     if (!actionMade){
                         System.out.println("This Pokemon can't evolve!");
                     }
                 }
-                case 4 -> {
+                case Constants.MENU_FOURTH_OPTION -> {
                     int special = player.typeSpecialty();
                     if (special == Constants.INVALID){
                         System.out.println("This Pokemon can't preform it's special attack!");

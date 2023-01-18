@@ -2,6 +2,10 @@ public class Constants {
     public static final int CURRENT_PLAYER = 1;
     public static final int OTHER_PLAYER = 2;
     public static final int NO_WINNER_YET = 0;
+    public static final int MENU_FIRST_OPTION = 1;
+    public static final int MENU_SECOND_OPTION = 2;
+    public static final int MENU_THIRD_OPTION = 3;
+    public static final int MENU_FOURTH_OPTION = 4;
     public static final int HP_LEVEL_1 = 20;
     public static final int AP_LEVEL_1 = 25;
     public static final int HP_LEVEL_2 = 30;
