@@ -2,9 +2,27 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Battle {
-    private Pokemon firstPlayer;
-    private Pokemon secondPlayer;
-
+    private Pokemon firstPokemon;
+    private Pokemon secondPokemon;
+    private boolean firstPlayer;
+    //O(1)
+    public Pokemon getFirstPokemon() {
+        return firstPokemon;
+    }
+    //O(1)
+    public Pokemon getSecondPokemon() {
+        return secondPokemon;
+    }
+    //O(1)
+    public boolean isFirstPlayer() {
+        return firstPlayer;
+    }
+    //O(1)
+    public Battle(){
+        this.setPokemons();
+        this.firstPlayer = false;
+    }
+    //O(1)
     private Pokemon generatePokemon (int random){
         Pokemon pokemon = null;
         switch (random){
@@ -17,65 +35,106 @@ public class Battle {
         }
         return pokemon;
     }
-    public void setPokemons (){
+    //O(1)
+    private void setPokemons (){
         Random random = new Random();
         int randomizedPokemon = random.nextInt(Constants.POSSIBLE_STARTING_POKEMON);
-        this.firstPlayer = this.generatePokemon(randomizedPokemon);
+        this.firstPokemon = this.generatePokemon(randomizedPokemon);
         randomizedPokemon = random.nextInt(Constants.POSSIBLE_STARTING_POKEMON);
-        this.secondPlayer = this.generatePokemon(randomizedPokemon);
+        this.secondPokemon = this.generatePokemon(randomizedPokemon);
     }
+    //O(1)
     private void autoAdd(Pokemon player){
         Random random = new Random();
-        int toAdd = random.nextInt(5);
+        int toAdd = random.nextInt(Constants.AUTO_BONUS_RANDOM_BOUND);
         player.addHp(toAdd);
-        toAdd = random.nextInt(5);
+        toAdd = random.nextInt(Constants.AUTO_BONUS_RANDOM_BOUND);
         player.addAp(toAdd);
     }
-    public void turnManagement(Pokemon player, Pokemon other){
+    //O(n)
+    public int turnManagement(Pokemon player, Pokemon other){
+        int winner = Constants.NO_WINNER_YET;
         Scanner scanner = new Scanner(System.in);
         this.autoAdd(player);
+        if (player.typeEqual(Constants.ELECTRIC_TYPE)){
+            player.typeEffect();
+        }
+        if (player.isPowerBonus()){
+            player.changeAttackModifier(player.getAttackModifier() * Constants.POWER_BONUS);
+            player.setPowerBonus();
+        }
         System.out.println(player);
-        System.out.println("Please insert your selection number: " +
-                "\n1. Preforming an attack." +
-                "\n2. Wait." +
-                "\n3. Evolve." +
-                "\n4. Special Move.");
         int menuSelection;
         boolean actionMade = false;
         do {
+            System.out.println("Please insert your selection number: " +
+                    "\n1. Preforming an attack." +
+                    "\n2. Wait." +
+                    "\n3. Evolve." +
+                    "\n4. Special Move.");
             menuSelection = scanner.nextInt();
             switch (menuSelection){
-                case 1 -> {
-                    actionMade = this.attack(player, other);
-                }
+                case 1 -> actionMade = this.attack(player, other);
                 case 2 -> {
-
+                    this.wait(player);
+                    actionMade = true;
+                }
+                case 3 -> {
+                    actionMade = player.evolve();
+                    if (!actionMade){
+                        System.out.println("This Pokemon can't evolve!");
+                    }
+                }
+                case 4 -> {
+                    int special = player.typeSpecialty();
+                    if (special == Constants.INVALID){
+                        System.out.println("This Pokemon can't preform it's special attack!");
+                    } else if (special == Constants.SUCCESS) {
+                        actionMade = true;
+                    }else{
+                        other.takeDamage(special);
+                        actionMade = true;
+                    }
                 }
             }
         }while (!actionMade);
+        if (player.getAttackModifier() > Constants.MAX_ATTACK_MODIFIER){
+            player.changeAttackModifier(player.getAttackModifier() / Constants.POWER_BONUS);
+        }
+        if (other.isDead()){
+            winner = Constants.CURRENT_PLAYER;
+        }else if (player.isDead()){
+            winner = Constants.OTHER_PLAYER;
+        }
+        return winner;
     }
+    //O(n)
     private boolean attack (Pokemon player, Pokemon other){
         Scanner scanner = new Scanner(System.in);
         boolean hasAttacked = false;
         int menuSelection;
         AttackMove[] attackMoves = player.getAttackMoves();
-        for (int i =0; i < attackMoves.length; i++){
-            System.out.println((i+1 + ". ") + attackMoves[i]);
+        for (int i = 0; i < attackMoves.length; i++){
+            System.out.println((i + 1 + ". ") + attackMoves[i]);
             System.out.println("**************");
         }
         System.out.println("Please insert the number of the desired attack: ");
         boolean validChoice = true;
         do{
             menuSelection = scanner.nextInt();
-            if (menuSelection > attackMoves.length - 1){
+            if (menuSelection > attackMoves.length){
                 validChoice = false;
                 System.out.println("Please re-enter your selection: ");
             }
         }while (!validChoice);
-        if (attackMoves[menuSelection -1].getApCost() <= player.getAttackPoints()){
-            int damage = attackMoves[menuSelection - 1].preformAttack(player.getAttackModifier());
-            player.reduceAttackPoints(attackMoves[menuSelection -1].getApCost());
+        menuSelection--;
+        if (attackMoves[menuSelection].getApCost() <= player.getAttackPoints()){
+            int damage = attackMoves[menuSelection].preformAttack(player.getAttackModifier());
+            player.reduceAttackPoints(attackMoves[menuSelection].getApCost());
             other.takeDamage(damage);
+            if (attackMoves[menuSelection].isTypeEqual(Constants.FIRE_TYPE)){
+                player.typeEffect();
+            }
             System.out.println(damage + " damage was dealt to opponent.");
             hasAttacked = true;
         }else{
@@ -83,12 +142,27 @@ public class Battle {
         }
         return hasAttacked;
     }
-    private boolean wait (Pokemon player){
+    //O(1)
+    private void wait (Pokemon player) {
         Random random = new Random();
-        int bonus = random.nextInt(3);
-        switch (bonus){
-            case
+        int bonus = random.nextInt(Constants.BONUS_RANDOM) + 1;
+        switch (bonus) {
+            case Constants.HP_BONUS -> {
+                bonus = random.nextInt(Constants.HP_BONUS_MIN, Constants.HP_BONUS_MAX);
+                player.addHp(bonus);
+            }
+            case Constants.AP_BONUS -> {
+                bonus = random.nextInt(Constants.AP_BONUS_MAX);
+                player.addAp(bonus);
+            }
+            case Constants.POWER_BONUS -> {
+                player.setPowerBonus();
+            }
         }
+    }
+    //O(1)
+    public void setFirstPlayer(){
+        this.firstPlayer = !this.firstPlayer;
     }
 }
 
