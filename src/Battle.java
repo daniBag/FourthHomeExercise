@@ -46,25 +46,49 @@ public class Battle {
             menuSelection = scanner.nextInt();
             switch (menuSelection){
                 case 1 -> {
-                    AttackMove[] attackMoves = player.getAttackMoves();
-                    for (int i =0; i < attackMoves.length; i++){
-                        System.out.println((i+1 + ". ") + attackMoves[i]);
-                        System.out.println("**************");
-                    }
-                    System.out.println("Please insert the number of the desired attack: ");
-                    menuSelection = scanner.nextInt();
-                    if (attackMoves[menuSelection -1].getApCost() <= player.getAttackPoints()){
-                        int damage = attackMoves[menuSelection - 1].preformAttack(player.getAttackModifier());
-                        player.reduceAttackPoints(attackMoves[menuSelection -1].getApCost());
-                        other.takeDamage(damage);
-                        actionMade = true;
-                    }
+                    actionMade = this.attack(player, other);
                 }
                 case 2 -> {
 
                 }
             }
         }while (!actionMade);
+    }
+    private boolean attack (Pokemon player, Pokemon other){
+        Scanner scanner = new Scanner(System.in);
+        boolean hasAttacked = false;
+        int menuSelection;
+        AttackMove[] attackMoves = player.getAttackMoves();
+        for (int i =0; i < attackMoves.length; i++){
+            System.out.println((i+1 + ". ") + attackMoves[i]);
+            System.out.println("**************");
+        }
+        System.out.println("Please insert the number of the desired attack: ");
+        boolean validChoice = true;
+        do{
+            menuSelection = scanner.nextInt();
+            if (menuSelection > attackMoves.length - 1){
+                validChoice = false;
+                System.out.println("Please re-enter your selection: ");
+            }
+        }while (!validChoice);
+        if (attackMoves[menuSelection -1].getApCost() <= player.getAttackPoints()){
+            int damage = attackMoves[menuSelection - 1].preformAttack(player.getAttackModifier());
+            player.reduceAttackPoints(attackMoves[menuSelection -1].getApCost());
+            other.takeDamage(damage);
+            System.out.println(damage + " damage was dealt to opponent.");
+            hasAttacked = true;
+        }else{
+            System.out.println("You don't have enough attack points.");
+        }
+        return hasAttacked;
+    }
+    private boolean wait (Pokemon player){
+        Random random = new Random();
+        int bonus = random.nextInt(3);
+        switch (bonus){
+            case
+        }
     }
 }
 
